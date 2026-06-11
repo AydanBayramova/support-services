@@ -29,7 +29,7 @@ public class OrderEventListener {
 
         notificationService.processNotification(
                 event.customerId(),
-                "aydanb.dev@gmail.com", // Test üçün sabit email
+                "aydanb.dev@gmail.com",
                 message,
                 subject,
                 NotificationType.EMAIL
