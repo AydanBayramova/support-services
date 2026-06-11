@@ -1,0 +1,75 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "10",
+        "author": "aydan",
+        "changes": [
+          {
+            "createTable": {
+              "tableName": "notification_logs",
+              "columns": [
+                {
+                  "column": {
+                    "name": "id",
+                    "type": "UUID",
+                    "constraints": {
+                      "primaryKey": true,
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "recipient_id",
+                    "type": "UUID",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "recipient_email",
+                    "type": "VARCHAR(255)",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "title",
+                    "type": "VARCHAR(255)"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "message",
+                    "type": "TEXT"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "status",
+                    "type": "VARCHAR(20)",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "sent_at",
+                    "type": "TIMESTAMP",
+                    "defaultValueComputed": "CURRENT_TIMESTAMP"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
