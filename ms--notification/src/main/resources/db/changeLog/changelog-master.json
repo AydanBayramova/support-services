@@ -1,0 +1,9 @@
+{
+  "databaseChangeLog": [
+    {
+      "include": {
+        "file": "db/changeLog/changes/10-create-notification-logs-table.json"
+      }
+    }
+  ]
+}
