@@ -1,0 +1,5 @@
+{
+  "databaseChangeLog": [
+    { "include": { "file": "db/changeLog/changes/12-create-orders-table.json" } }
+  ]
+}

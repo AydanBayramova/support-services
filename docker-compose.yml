@@ -1,0 +1,103 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: delivery-db
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    networks:
+      - delivery-network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: delivery-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - delivery-network
+
+  redis:
+    image: redis:alpine
+    container_name: delivery-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - delivery-network
+
+
+  eureka-server:
+    build: ./infrastructure-services/eureka-server
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    networks:
+      - delivery-network
+
+  api-gateway:
+    build: ./infrastructure-services/api-gateway
+    container_name: api-gateway
+    ports:
+      - "80:80"
+    depends_on:
+      - eureka-server
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    networks:
+      - delivery-network
+
+  ms-payment:
+    build: ./support-services/ms-payment
+    container_name: ms-payment
+    depends_on:
+      - postgres
+      - rabbitmq
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/payment_db
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    networks:
+      - delivery-network
+
+  ms-notification:
+    build: ./support-services/ms-notification
+    container_name: ms-notification
+    depends_on:
+      - postgres
+      - rabbitmq
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/notification_db
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    networks:
+      - delivery-network
+
+  ms-tracking:
+    build: ./support-services/ms-tracking
+    container_name: ms-tracking
+    depends_on:
+      - redis
+      - rabbitmq
+    environment:
+      - SPRING_DATA_REDIS_HOST=redis
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    networks:
+      - delivery-network
+
+  ms-rating:
+    build: ./support-services/ms-rating
+    container_name: ms-rating
+    depends_on:
+      - postgres
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/rating_db
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    networks:
+      - delivery-network
+
+networks:
+  delivery-network:
+    driver: bridge
