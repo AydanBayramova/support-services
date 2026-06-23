@@ -15,11 +15,10 @@ public class OrderEventListener {
 
     private final NotificationService notificationService;
 
-    @RabbitListener(queues = "notification-service-queue") // Bu quyruğu dinlə
+    @RabbitListener(queues = "notification-service-queue")
     public void handleOrderEvent(OrderEvent event) {
         log.info("Notification Service received order event: {} with status {}", event.orderId(), event.status());
 
-        // 1. Mesajın mətnini statusa görə hazırlayırıq
         String subject = "Delivery App - Order Update";
         String message = switch (event.status()) {
             case "ASSIGNED" -> "Great news! Your order " + event.orderId() + " has been assigned to a courier.";
@@ -28,11 +27,9 @@ public class OrderEventListener {
             default -> "There is an update on your order " + event.orderId();
         };
 
-        // 2. NotificationService vasitəsilə Email göndəririk
-        // Qeyd: recipientEmail real layihədə ms-user-dən gəlməlidir, hələlik test üçün sabit yazırıq
         notificationService.processNotification(
                 event.customerId(),
-                "aydanb.dev@gmail.com", // Test üçün sabit email
+                "aydanb.dev@gmail.com",
                 message,
                 subject,
                 NotificationType.EMAIL
