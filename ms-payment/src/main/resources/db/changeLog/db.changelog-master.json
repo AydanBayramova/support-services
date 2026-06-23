@@ -1,0 +1,14 @@
+{
+  "databaseChangeLog": [
+    {
+      "include": {
+        "file": "db/changeLog/changes/08-create-courier-wallets-table.json"
+      }
+    },
+    {
+      "include": {
+        "file": "db/changeLog/changes/09-create-payments-table.json"
+      }
+    }
+  ]
+}
